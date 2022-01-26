@@ -1,0 +1,8 @@
+*.las
+*.LAS
+*.tif
+*.tiff
+*.TIF
+.TIFF
+./**/*.las
+*.pdf
