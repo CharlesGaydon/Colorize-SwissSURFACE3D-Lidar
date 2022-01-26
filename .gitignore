@@ -6,3 +6,4 @@
 .TIFF
 ./**/*.las
 *.pdf
+nohup.out
