@@ -45,7 +45,7 @@ In a virtual environment, you will need `python-pdal` (for installation see [her
 Activate the environement, then run:
 
 ```
-    python unzip_and_prepare_data.py
+    python unzip_and_colorize.py
 ```
 There are a few harcoded arguments you can parameter in `unzip_and_prepare_data.py`.
 
