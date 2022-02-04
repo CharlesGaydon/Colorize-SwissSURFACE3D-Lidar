@@ -12,7 +12,6 @@ from tqdm import tqdm
 input_data_dir = "./data/download/"
 colorized_data_dir = "./data/colorized/"
 
-SUBTILE_WIDTH_METERS: int = 50
 RASTER_RESOLUTION: str = "0.1"  # either "0.1"or "2" meters
 
 TRAIN_FRAC: float = 0.6
