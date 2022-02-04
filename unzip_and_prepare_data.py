@@ -1,16 +1,16 @@
 import os, glob
 import os.path as osp
 import re
-from typing import AnyStr
+from typing import AnyStr, Dict, List
 from zipfile import ZipFile
 import numpy as np
+import pandas as pd
 import pdal, json
 from tqdm import tqdm
 
 
 input_data_dir = "./data/download/"
 colorized_data_dir = "./data/colorized/"
-splitted_data_dir = "./data/splitted/"
 
 SUBTILE_WIDTH_METERS: int = 50
 RASTER_RESOLUTION: str = "0.1"  # either "0.1"or "2" meters
@@ -20,8 +20,8 @@ VAL_TEST_FRAC: float = 0.2  # Typically: (1-TRAIN_FRAC)/2
 
 
 def main():
-    # For now assume all las are downloaded a single las subfolder, and that
-    # there is a orthos subfolder at the same level.
+    # We assume all las are downloaded as zip files in a single folder "las", and
+    # that there is an "orthos" folder containing related .tif files at the same level.
     las_list = glob.glob(osp.join(input_data_dir, "las", "*.las.zip"))
     np.random.shuffle(sorted(las_list))
     n_las = len(las_list)
@@ -48,21 +48,25 @@ def main():
         "val": val_las_list,
         "test": test_las_list,
     }
+    df = pd.DataFrame(columns=["basename", "split"])
 
     os.makedirs(colorized_data_dir, exist_ok=True)
-    os.makedirs(splitted_data_dir, exist_ok=True)
     for phase, las_list in tqdm(las_split_dict.items(), desc="Phases"):
         print(phase)
         for las_path in tqdm(las_list, desc="Files"):
             print(las_path)
-            las_id, ortho_path = match_with_ortho(las_path, orthos_list)
-
+            ortho_path = match_single_with_ortho(las_path, orthos_list)
             output_las_path = unzip(las_path)
-
             colorize(output_las_path, ortho_path)
+            df = df.append(
+                {
+                    "basename": osp.basename(output_las_path),
+                    "split": phase,
+                },
+                ignore_index=True,
+            )
 
-            splitted_las_path = get_splitted_las_path(phase, las_id)
-            split(output_las_path, splitted_las_path)
+    df.to_csv(osp.join(colorized_data_dir, "dataset_split.csv"))
 
 
 def unzip(las_path):
@@ -89,55 +93,21 @@ def colorize(unziped_las_path: AnyStr, ortho_path: AnyStr):
     return unziped_las_path
 
 
-def split(colorized_las_path, splitted_las_path):
-    """
-    Split data subtiles for training/validation/testing.
-    buffer_for_overlap is useful to augment training data.
-    """
-    _reader = [{"type": "readers.las", "filename": colorized_las_path}]
-    _splitter = [
-        {
-            "type": "filters.splitter",
-            "length": SUBTILE_WIDTH_METERS,
-        },
-    ]
-    _writer = [
-        {
-            "type": "writers.las",
-            "filename": splitted_las_path,
-            "forward": "all",  # keep all dimensions based on input format
-            "extra_dims": "all",  # keep all extra dims as well
-        }
-    ]
-    pipeline = {"pipeline": _reader + _splitter + _writer}
-    pipeline = json.dumps(pipeline)
-    pipeline = pdal.Pipeline(pipeline)
-    pipeline.execute()
-
-
 def match_all_with_ortho(las_list, orthos_list):
     """Returns the right ortho path based on a list of las paths"""
     matches = []
     for las_path in las_list:
-        _, ortho_path = match_with_ortho(las_path, orthos_list)
+        ortho_path = match_single_with_ortho(las_path, orthos_list)
         matches.append(ortho_path)
     return matches
 
 
-def match_with_ortho(las_path, orthos_list):
+def match_single_with_ortho(las_path, orthos_list):
     """Returns the las_id and the associated ortho path"""
     las_id = re.findall(r"[0-9]{4,10}-[0-9]{4,4}", las_path)[0]
     ortho_identifier = f"{las_id.replace('_', '-')}_{RASTER_RESOLUTION}"
     ortho_path = [o for o in orthos_list if ortho_identifier in o][0]
-    return las_id, ortho_path
-
-
-def get_splitted_las_path(phase, las_id):
-    """Find the LAS identifier needed to cross las path with orthoimage path"""
-    split_name = las_id + "_SUB_#.las"
-    splitted_las_path = osp.join(splitted_data_dir, phase, las_id, split_name)
-    os.makedirs(osp.dirname(splitted_las_path), exist_ok=True)
-    return splitted_las_path
+    return ortho_path
 
 
 if __name__ == "__main__":

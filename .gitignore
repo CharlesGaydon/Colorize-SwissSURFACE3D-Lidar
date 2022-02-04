@@ -9,3 +9,4 @@
 ./**/*.las
 *.pdf
 nohup.out
+*.csv
