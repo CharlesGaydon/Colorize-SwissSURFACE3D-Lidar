@@ -40,7 +40,7 @@ XY pairs will be used to match point clouds with orthoimages and are expected to
 ```
 ### 3. Make a train/val/test split, colorize, and divide tiles into smaller subtiles
 
-In a virtual environment, you will need `python-pdal` (for installation see [here](https://pdal.io/quickstart.html) and [here](https://opensourceoptions.com/blog/install-pdal-for-python-with-anaconda/)) and `numpy` to be installed. Code was run using python `3.9` and PDAL `2.3.0`.
+In a virtual environment, you will need `pdal` (for installation see [here](https://pdal.io/quickstart.html) and [here](https://opensourceoptions.com/blog/install-pdal-for-python-with-anaconda/)) and `numpy` to be installed. Code was run using python `3.9` and PDAL `3.0.2`.
 
 Activate the environement, then run:
 
