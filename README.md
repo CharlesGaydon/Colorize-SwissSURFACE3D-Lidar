@@ -10,12 +10,10 @@ The data comes in the form of 1km² square tiles, in CH1903+ / LV95 (EPSG:2056) 
 
 Running `unzip_and_prepare_data.py` (see below for instructions) will produce the following:
 
-- Tiles separated into train, validation, and test sets (see `TRAIN_FRAC` and `VAL_TEST_FRAC` for their size)
+- Tiles separated into train, validation, and test sets (see `TRAIN_FRAC` and `VAL_TEST_FRAC` for their size), as documented in a csv file.
 - Unziped point cloud with color information in `colorized/train/`, `colorized/val/`, and `colorized/test/` subfolders (see `RASTER_RESOLUTION` to choose color resolution among 2m and 0.1m).
-- Points clouds with colors information, splitted in several square subtiles (of size `SUBTILE_WIDTH_METERS`) for deep learning training in `colorized/{train/val/test}/{las_basename}/{las_basename}_SUB{index}.las`
 
 ## Process
-
 
 ### 1. Select you data
 How to select data and download on SwissTopo website is explained [here (EN)](https://www.swisstopo.admin.ch/en/geodata/info.html) and [here (FR)])[https://www.swisstopo.admin.ch/fr/geodata/info.html].
@@ -42,13 +40,13 @@ XY pairs will be used to match point clouds with orthoimages and are expected to
 ```
 ### 3. Make a train/val/test split, colorize, and divide tiles into smaller subtiles
 
-In a virtual environment, you will need `python-pdal` (for installation see [here](https://pdal.io/quickstart.html) and [here](https://opensourceoptions.com/blog/install-pdal-for-python-with-anaconda/)) and `numpy` to be installed. Code was run using python `3.9` and PDAL `2.3.0`.
+In a virtual environment, you will need `pdal` (for installation see [here](https://pdal.io/quickstart.html) and [here](https://opensourceoptions.com/blog/install-pdal-for-python-with-anaconda/)) and `numpy` to be installed. Code was run using python `3.9` and PDAL `3.0.2`.
 
 Activate the environement, then run:
 
 ```
-    python unzip_and_prepare_data.py
+    python unzip_and_colorize.py
 ```
-There are a few harcoded arguments you can parameter in `unzip_and_prepare_data.py`, see below. 
+There are a few harcoded arguments you can parameter in `unzip_and_prepare_data.py`.
 
 

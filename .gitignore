@@ -5,6 +5,7 @@
 *.tif
 *.tiff
 *.TIF
+*.data
 .TIFF
 ./**/*.las
 *.pdf
