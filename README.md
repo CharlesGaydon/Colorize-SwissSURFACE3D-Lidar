@@ -38,7 +38,7 @@ XY pairs will be used to match point clouds with orthoimages and are expected to
     wget --directory-prefix=./download/orthos/ --input-file=DATE_AREA_SwissIMAGE10cm_Links_LV95.csv
     wget --directory-prefix=./download/las/ --input-file=DATE_AREA_SwissSURFACE3D_Links_LV95.csv
 ```
-### 3. Make a train/val/test split, colorize, and divide tiles into smaller subtiles
+### 3. Make a train/val/test split and colorize
 
 In a virtual environment, you will need `pdal` (for installation see [here](https://pdal.io/quickstart.html) and [here](https://opensourceoptions.com/blog/install-pdal-for-python-with-anaconda/)) and `numpy` to be installed. Code was run using python `3.9` and PDAL `3.0.2`.
 
